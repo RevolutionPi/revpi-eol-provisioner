@@ -22,7 +22,7 @@ class RevPi:
         mac_address = MacAddress(first_mac_address)
         mac_addresses = []
 
-        for index, interface in enumerate(filter(lambda i: i.has_eeprom, self.network_interfaces)):
+        for interface in self.network_interfaces:
             interface.set_mac_address(mac_address)
             mac_addresses.append(mac_address)
 
