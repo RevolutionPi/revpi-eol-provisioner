@@ -1,6 +1,7 @@
 class HatEEPROM:
-    def __init__(self,  write_protect_gpio: int) -> None:
+    def __init__(self,  write_protect_gpio: int, gpio_chip: str = "gpiochip0") -> None:
         self.write_protect_gpio = write_protect_gpio
+        self.gpio_chip = gpio_chip
 
     def _write_image(self, eeprom_image: str):
         print(f"write hat eeprom with image '{eeprom_image}'")
