@@ -9,6 +9,10 @@ NETWORK_INTERFACE_TYPES = {
 }
 
 
+class NetworkEEPROMException(Exception):
+    pass
+
+
 class InvalidNetworkInterfaceTypeString(Exception):
     pass
 
