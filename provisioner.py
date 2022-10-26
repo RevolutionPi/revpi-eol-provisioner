@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
+import os.path
+import sys
 
+import yaml
+from schema import SchemaError
+
+from config import config_schema
 from revpi_provisioning.hat import HatEEPROM
 from revpi_provisioning.network import find_interface_class
-from revpi_provisioning.network.usb import LAN95XXNetworkInterface
 from revpi_provisioning.revpi import RevPi
 
 
@@ -10,6 +15,11 @@ def _extract_product(product_number: str) -> tuple:
     product_id = int(product_number[2:8])
     revision = int(product_number[9:11])
     return (product_id, revision)
+
+
+def error(msg: str, rc: int):
+    print(msg, file=sys.stderr)
+    sys.exit(rc)
 
 
 if __name__ == "__main__":
@@ -29,23 +39,43 @@ if __name__ == "__main__":
     image_path = args.eep_image
 
     _extract_product(product)
-    ####################### FROM TEMPLATE - BEGIN #############################
-    # define product
+
+    device_config_file = f"devices/{product}.yaml"
+    if not os.path.exists(device_config_file):
+        error(
+            f"Device configuration file '{device_config_file}' does not exist", 1)
+
+    with open(device_config_file, "r") as stream:
+        try:
+            configuration = yaml.safe_load(stream)
+        except yaml.YAMLError as ye:
+            error(f"Could not parse device configuration file: {ye}", 2)
+
+    try:
+        config_schema.validate(configuration)
+    except SchemaError as se:
+        error(f"Schema error in device configuration file: {se}", 3)
+
     revpi = RevPi(*_extract_product(product))
 
-    # define HAT EEPROM
-    revpi.hat_eeprom = HatEEPROM(22)
+    # add HAT EEPROM if specified in config file
+    if "hat_eeprom" in configuration:
+        revpi.hat_eeprom = HatEEPROM(configuration["hat_eeprom"]["wp_gpio"])
 
-    # define network interfaces (with attached EEPROMs)
-    revpi.network_interfaces.append(LAN95XXNetworkInterface("1-5.1.2:1.0", True))
-    revpi.network_interfaces.append(LAN95XXNetworkInterface("1-5.1.2:1.0", True))
+    # add network interfaces from config file
+    for interface_config in configuration.get("network_interfaces", []):
+        # determine corrent interface class by type lookup
+        interface_class = find_interface_class(interface_config["type"])
 
-    # ... or define network interfaces and determine class from type string
-    # (eg. with yaml templates or arparse)
-    LAN = find_interface_class("lan87xx")
-    revpi.network_interfaces.append(LAN('0000:00:14.3', True))
-    ####################### FROM TEMPLATE - END ###############################
+        interface = interface_class(
+            interface_config["path"],
+            interface_config.get("eeprom", False)
+        )
 
-    # device specific parts (eg. in a loop)
+        revpi.network_interfaces.append(interface)
+
+    # write HAT EEPROM with specified image
     revpi.write_hat_eeprom(image_path)
+
+    # write mac addresses (and other defaults values) to ethernet EEPROMs
     print(revpi.write_mac_addresses(mac))
