@@ -5,6 +5,13 @@ class InvalidMacAddressFormat(Exception):
     pass
 
 
+class InvalidProductNumberException(Exception):
+    def __init__(self, product_number: str):
+        self.product_number = product_number
+
+        super().__init__(f"Could not parse product number: {product_number}")
+
+
 class MacAddress:
     """MAC address representation class with some helper methods"""
 
@@ -55,3 +62,12 @@ class MacAddress:
     @property
     def nic(self) -> str:
         return str(self)[6:]
+
+
+def extract_product(product_number: str) -> tuple:
+    product_match = re.match(r'^PR([0-9]{6})R([0-9]{2})$', product_number, re.IGNORECASE)
+
+    if product_match:
+        return product_match.groups()
+
+    raise InvalidProductNumberException(product_number)
