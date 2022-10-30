@@ -4,13 +4,7 @@ from revpi_provisioning.hat import HatEEPROM
 from revpi_provisioning.network import find_interface_class
 from revpi_provisioning.network.usb import LAN95XXNetworkInterface
 from revpi_provisioning.revpi import RevPi
-
-
-def _extract_product(product_number: str) -> tuple:
-    product_id = int(product_number[2:8])
-    revision = int(product_number[9:11])
-    return (product_id, revision)
-
+from revpi_provisioning.utils import extract_product
 
 if __name__ == "__main__":
     import argparse
@@ -28,10 +22,9 @@ if __name__ == "__main__":
     mac = args.mac_address
     image_path = args.eep_image
 
-    _extract_product(product)
     ####################### FROM TEMPLATE - BEGIN #############################
     # define product
-    revpi = RevPi(*_extract_product(product))
+    revpi = RevPi(*extract_product(product))
 
     # define HAT EEPROM
     revpi.hat_eeprom = HatEEPROM(22)
