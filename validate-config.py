@@ -3,9 +3,15 @@
 import argparse
 import os
 import yaml
+import sys
 
-from provisioner import error, SchemaError
+from schema import SchemaError
 from config import config_schema
+
+def error(msg: str, rc: int):
+    print(msg, file=sys.stderr)
+    sys.exit(rc)
+
 
 parser = argparse.ArgumentParser(
     description="Validate device configuration file")
