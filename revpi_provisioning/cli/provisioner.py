@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import os.path
 import pathlib
 
@@ -11,21 +12,30 @@ from revpi_provisioning.revpi import RevPi
 from revpi_provisioning.utils import extract_product
 from schema import SchemaError
 
-if __name__ == "__main__":
-    import argparse
 
+def parse_args() -> tuple:
     parser = argparse.ArgumentParser(description="Provision RevPi hardware")
-    parser.add_argument('product_number', metavar='product-number',
-                        help='product number of target device in format PRxxxxxxRxx')
-    parser.add_argument('mac_address', metavar='mac-address',
-                        help='first MAC address of target device')
-    parser.add_argument('eep_image', metavar='eep-image',
-                        help='path to eep-image file to be written')
+
+    parser.add_argument(
+        'product_number',
+        metavar='product-number',
+        help='product number of target device in format PRxxxxxxRxx')
+    parser.add_argument(
+        'mac_address',
+        metavar='mac-address',
+        help='first MAC address of target device')
+    parser.add_argument(
+        'eep_image',
+        metavar='eep-image',
+        help='path to eep-image file to be written')
 
     args = parser.parse_args()
-    product = args.product_number
-    mac = args.mac_address
-    image_path = args.eep_image
+
+    return args.product_number, args.mac_address, args.eep_image
+
+
+if __name__ == "__main__":
+    product, mac, image_path = parse_args()
 
     basepath = pathlib.Path(__file__).parent.resolve()
     device_config_file = f"{basepath}/../devices/{product}.yaml"
