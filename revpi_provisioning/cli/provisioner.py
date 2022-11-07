@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
 import os.path
-import sys
+import pathlib
 
 import yaml
-from schema import SchemaError
-
-from config import config_schema
+from revpi_provisioning.cli.utils import error
+from revpi_provisioning.config import config_schema
 from revpi_provisioning.hat import HatEEPROM
 from revpi_provisioning.network import find_interface_class
 from revpi_provisioning.revpi import RevPi
 from revpi_provisioning.utils import extract_product
-
-def error(msg: str, rc: int):
-    print(msg, file=sys.stderr)
-    sys.exit(rc)
-
+from schema import SchemaError
 
 if __name__ == "__main__":
     import argparse
@@ -32,7 +27,8 @@ if __name__ == "__main__":
     mac = args.mac_address
     image_path = args.eep_image
 
-    device_config_file = f"devices/{product}.yaml"
+    basepath = pathlib.Path(__file__).parent.resolve()
+    device_config_file = f"{basepath}/../devices/{product}.yaml"
     if not os.path.exists(device_config_file):
         error(
             f"Device configuration file '{device_config_file}' does not exist", 1)
