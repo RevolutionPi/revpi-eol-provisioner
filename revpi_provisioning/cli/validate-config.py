@@ -2,15 +2,11 @@
 
 import argparse
 import os
+
 import yaml
-import sys
-
+from revpi_provisioning.cli.utils import error
+from revpi_provisioning.config import config_schema
 from schema import SchemaError
-from config import config_schema
-
-def error(msg: str, rc: int):
-    print(msg, file=sys.stderr)
-    sys.exit(rc)
 
 
 parser = argparse.ArgumentParser(
