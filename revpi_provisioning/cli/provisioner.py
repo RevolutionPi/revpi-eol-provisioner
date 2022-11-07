@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 import argparse
-import os.path
-import pathlib
 
-import yaml
 from revpi_provisioning.cli.utils import error
-from revpi_provisioning.config import config_schema
+from revpi_provisioning.config import EOLConfigException, load_config
 from revpi_provisioning.hat import HatEEPROM
 from revpi_provisioning.network import find_interface_class
 from revpi_provisioning.revpi import RevPi
 from revpi_provisioning.utils import extract_product
-from schema import SchemaError
 
 
 def parse_args() -> tuple:
@@ -37,43 +33,32 @@ def parse_args() -> tuple:
 if __name__ == "__main__":
     product, mac, image_path = parse_args()
 
-    basepath = pathlib.Path(__file__).parent.resolve()
-    device_config_file = f"{basepath}/../devices/{product}.yaml"
-    if not os.path.exists(device_config_file):
-        error(
-            f"Device configuration file '{device_config_file}' does not exist", 1)
-
-    with open(device_config_file, "r") as stream:
-        try:
-            configuration = yaml.safe_load(stream)
-        except yaml.YAMLError as ye:
-            error(f"Could not parse device configuration file: {ye}", 2)
-
     try:
-        config_schema.validate(configuration)
-    except SchemaError as se:
-        error(f"Schema error in device configuration file: {se}", 3)
+        configuration = load_config(product)
 
-    revpi = RevPi(*extract_product(product))
+        revpi = RevPi(*extract_product(product))
 
-    # add HAT EEPROM if specified in config file
-    if "hat_eeprom" in configuration:
-        revpi.hat_eeprom = HatEEPROM(configuration["hat_eeprom"]["wp_gpio"])
+        # add HAT EEPROM if specified in config file
+        if "hat_eeprom" in configuration:
+            revpi.hat_eeprom = HatEEPROM(
+                configuration["hat_eeprom"]["wp_gpio"])
 
-    # add network interfaces from config file
-    for interface_config in configuration.get("network_interfaces", []):
-        # determine current interface class by type lookup
-        interface_class = find_interface_class(interface_config["type"])
+        # add network interfaces from config file
+        for interface_config in configuration.get("network_interfaces", []):
+            # determine current interface class by type lookup
+            interface_class = find_interface_class(interface_config["type"])
 
-        interface = interface_class(
-            interface_config["path"],
-            interface_config.get("eeprom", False)
-        )
+            interface = interface_class(
+                interface_config["path"],
+                interface_config.get("eeprom", False)
+            )
 
-        revpi.network_interfaces.append(interface)
+            revpi.network_interfaces.append(interface)
 
-    # write HAT EEPROM with specified image
-    revpi.write_hat_eeprom(image_path)
+        # write HAT EEPROM with specified image
+        revpi.write_hat_eeprom(image_path)
 
-    # write mac addresses (and other default values) to ethernet EEPROMs
-    print(revpi.write_mac_addresses(mac))
+        # write mac addresses (and other default values) to ethernet EEPROMs
+        print(revpi.write_mac_addresses(mac))
+    except EOLConfigException as ce:
+        error(ce, 1)

@@ -1,6 +1,15 @@
-from schema import And, Optional, Schema
+import os
+import pathlib
+
+import yaml
+from schema import And, Optional, Schema, SchemaError
 
 from revpi_provisioning.network import NETWORK_INTERFACE_TYPES
+
+
+class EOLConfigException(Exception):
+    pass
+
 
 config_schema = Schema({
     Optional("hat_eeprom"): {
@@ -18,20 +27,30 @@ config_schema = Schema({
     ]
 })
 
+
 def load_config(product: str) -> dict:
     basepath = pathlib.Path(__file__).parent.resolve()
-    device_config_file = f"{basepath}/../devices/{product}.yaml"
+    device_config_file = f"{basepath}/devices/{product}.yaml"
+
     if not os.path.exists(device_config_file):
-        error(
-            f"Device configuration file '{device_config_file}' does not exist", 1)
+        raise EOLConfigException(
+            f"Device configuration file '{device_config_file}' "
+            "does not exist"
+        )
 
     with open(device_config_file, "r") as stream:
         try:
             configuration = yaml.safe_load(stream)
         except yaml.YAMLError as ye:
-            error(f"Could not parse device configuration file: {ye}", 2)
+            raise EOLConfigException(
+                f"Could not parse device configuration file: {ye}"
+            )
 
     try:
         config_schema.validate(configuration)
     except SchemaError as se:
-        error(f"Schema error in device configuration file: {se}", 3)
+        raise EOLConfigException(
+            f"Schema error in device configuration file: {se}"
+        )
+
+    return configuration
