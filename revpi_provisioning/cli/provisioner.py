@@ -33,7 +33,7 @@ def parse_args() -> tuple:
     return args.product_number, args.mac_address, args.eep_image
 
 
-if __name__ == "__main__":
+def main() -> None:
     product, mac, image_path = parse_args()
 
     print(f"Starting device provisioning for product '{product}'")
@@ -50,18 +50,23 @@ if __name__ == "__main__":
             print(f"Found HAT EEPROM definition in config file. Will write image '{image_path}'")
             revpi.hat_eeprom = HatEEPROM(
                 configuration["hat_eeprom"]["wp_gpio"],
-                configuration["hat_eeprom"].get("wp_gpio_chipname", "gpiochip0")
-                )
+                configuration["hat_eeprom"].get(
+                    "wp_gpio_chipname", "gpiochip0")
+            )
 
         print(f"Registering network interfaces. Base mac address will be '{mac}'")
-        for interface_config in configuration.get("network_interfaces", []):
-            # determine current interface class by type lookup
-            interface_class = find_interface_class(interface_config["type"])
 
-            print(f"\t {interface_config['path']} ({interface_config['type']}) ... ", end='')
+        for interface_config in configuration.get("network_interfaces", []):
+            interface_path = interface_config['path']
+            interface_type = interface_config['type']
+
+            # determine current interface class by type lookup
+            interface_class = find_interface_class(interface_type)
+
+            print(f"\t {interface_path} ({interface_type}) ... ", end='')
 
             interface = interface_class(
-                interface_config["path"],
+                interface_path,
                 interface_config.get("eeprom", False)
             )
 
@@ -90,3 +95,7 @@ if __name__ == "__main__":
     except (NetworkEEPROMException, InvalidNetworkInterfaceTypeString) as ne:
         print("FAILED")
         error(f"Could not write mac address: {ne}", 4)
+
+
+if __name__ == "__main__":
+    main()
