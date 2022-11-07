@@ -20,6 +20,6 @@ jobs:
 
       - name: Validate config files
         run: |
-          for config in devices/PR*.yaml; do
-            python3 validate-config.py $config
+          for config in revpi_provisioning/devices/PR*.yaml; do
+            python3 -m revpi_provisioning.cli.validator $config
           done
