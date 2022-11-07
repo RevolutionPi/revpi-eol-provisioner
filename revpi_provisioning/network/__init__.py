@@ -38,10 +38,7 @@ class NetworkInterface:
 
     def set_mac_address(self, mac_address: str):
         if self.has_eeprom:
-            print(f"write eeprom")
             self._write_eeprom(mac_address)
-        else:
-            print("no eeprom attached")
 
     def _write_eeprom(self, mac_address: str):
-        raise NotImplemented()
+        raise NotImplementedError()
