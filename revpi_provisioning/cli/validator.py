@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 
-import yaml
 from revpi_provisioning.cli.utils import error
-from revpi_provisioning.config import config_schema
-from schema import SchemaError
+from revpi_provisioning.config import EOLConfigException, load_config
 
 
 def main() -> None:
@@ -17,19 +14,14 @@ def main() -> None:
     args = parser.parse_args()
 
     device_config_file = args.config
-    if not os.path.exists(device_config_file):
-        error(
-            f"Device configuration file '{device_config_file}' does not exist", 1)
-
-    with open(device_config_file, "r") as stream:
-        try:
-            configuration = yaml.safe_load(stream)
-        except yaml.YAMLError as ye:
-            error(f"Could not parse device configuration file: {ye}", 2)
 
     try:
-        config_schema.validate(configuration)
-    except SchemaError as se:
-        error(f"Schema error in device configuration file: {se}", 3)
+        load_config(device_config_file, absolute_path=True)
+    except EOLConfigException as ce:
+        error(f"Failed to validate device configuration file: {ce}", 1)
 
-    print("Device configuration file validated succesfully")
+    print(f"Device configuration file '{device_config_file}' has been validated succesfully")
+
+
+if __name__ == "__main__":
+    main()
