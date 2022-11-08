@@ -28,9 +28,12 @@ config_schema = Schema({
 })
 
 
-def load_config(product: str) -> dict:
-    basepath = pathlib.Path(__file__).parent.resolve()
-    device_config_file = f"{basepath}/devices/{product}.yaml"
+def load_config(name: str, absolute_path: bool = False) -> dict:
+    if absolute_path:
+        device_config_file = name
+    else:
+        basepath = pathlib.Path(__file__).parent.resolve()
+        device_config_file = f"{basepath}/devices/{name}.yaml"
 
     if not os.path.exists(device_config_file):
         raise EOLConfigException(
