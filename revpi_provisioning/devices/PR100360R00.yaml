@@ -1,1 +1,5 @@
-_core.yaml
+---
+network_interfaces:
+  - type: lan95xx
+    path: 1-1.1:1.0
+    eeprom: False
