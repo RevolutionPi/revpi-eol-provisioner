@@ -58,14 +58,19 @@ def main() -> None:
 
         print(f"Registering network interfaces. Base mac address will be '{mac}'")
 
-        for interface_config in configuration.get("network_interfaces", []):
+        for index, interface_config in enumerate(configuration.get("network_interfaces", [])):
             interface_path = interface_config["path"]
             interface_type = interface_config["type"]
 
             # determine current interface class by type lookup
             interface_class = find_interface_class(interface_type)
 
-            print(f"\t {interface_path} ({interface_type}) ... ", end="")
+            line = f"  Ethernet {index}: type={interface_type} "
+            if interface_path:
+                line += f"path={interface_path} "
+            line += "... "
+
+            print(line, end="")
 
             interface = interface_class(
                 interface_path, interface_config.get("eeprom", False)
