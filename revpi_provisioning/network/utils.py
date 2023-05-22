@@ -1,4 +1,3 @@
-
 import glob
 
 
@@ -21,6 +20,6 @@ def find_ethernet_device_name(bus: str, device_path: str):
     if len(names) == 0:
         raise NetworkInterfaceNotFoundException(device_path)
 
-    name = names[0].split('/')[-1]
+    name = names[0].split("/")[-1]
 
     return name

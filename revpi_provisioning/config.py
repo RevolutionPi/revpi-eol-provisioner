@@ -11,21 +11,22 @@ class EOLConfigException(Exception):
     pass
 
 
-config_schema = Schema({
-    Optional("hat_eeprom"): {
-        "wp_gpio": int,
-        Optional("wp_gpiochip"): str
-    },
-    "network_interfaces": [
-        {
-            "type": And(
-                str,
-                lambda t: t in NETWORK_INTERFACE_TYPES.keys(),
-                error="Invalid network interface type"),
-            "path": str,
-            "eeprom": bool}
-    ]
-})
+config_schema = Schema(
+    {
+        Optional("hat_eeprom"): {"wp_gpio": int, Optional("wp_gpiochip"): str},
+        "network_interfaces": [
+            {
+                "type": And(
+                    str,
+                    lambda t: t in NETWORK_INTERFACE_TYPES.keys(),
+                    error="Invalid network interface type",
+                ),
+                "path": str,
+                "eeprom": bool,
+            }
+        ],
+    }
+)
 
 
 def load_config(name: str, absolute_path: bool = False) -> dict:
@@ -37,23 +38,18 @@ def load_config(name: str, absolute_path: bool = False) -> dict:
 
     if not os.path.exists(device_config_file):
         raise EOLConfigException(
-            f"Device configuration file '{device_config_file}' "
-            "does not exist"
+            f"Device configuration file '{device_config_file}' " "does not exist"
         )
 
     with open(device_config_file, "r") as stream:
         try:
             configuration = yaml.safe_load(stream)
         except yaml.YAMLError as ye:
-            raise EOLConfigException(
-                f"Could not parse device configuration file: {ye}"
-            )
+            raise EOLConfigException(f"Could not parse device configuration file: {ye}")
 
     try:
         config_schema.validate(configuration)
     except SchemaError as se:
-        raise EOLConfigException(
-            f"Schema error in device configuration file: {se}"
-        )
+        raise EOLConfigException(f"Schema error in device configuration file: {se}")
 
     return configuration

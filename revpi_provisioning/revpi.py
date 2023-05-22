@@ -38,7 +38,7 @@ class RevPi:
             except yaml.YAMLError as exc:
                 print(exc)
 
-        instance = RevPi(data['product_id'], data['product_revision'])
+        instance = RevPi(data["product_id"], data["product_revision"])
 
         for interface_config in data.get("network_interfaces", []):
             network_interface = NetworkInterface.from_config(interface_config)
