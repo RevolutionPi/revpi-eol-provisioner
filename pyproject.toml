@@ -1,0 +1,17 @@
+[tool.ruff]
+line-length = 100
+select = [
+    "ANN", # flake8-annotations
+    "B",   # flake8-bugbear
+    "D",   # pydocstyle
+    "E",   # pycodestyle
+    "F",   # Pyflakes
+    "Q",   # flake8-quotes
+]
+ignore = [
+    "ANN101", # missing-type-self
+    "D107",   # undocumented-public-init
+]
+
+[tool.ruff.mccabe]
+max-complexity = 10
