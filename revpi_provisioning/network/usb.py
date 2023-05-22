@@ -5,7 +5,9 @@ from revpi_provisioning.network.utils import find_usb_ethernet_device_name
 
 
 class USBNetworkInterface(NetworkInterface):
-    def __init__(self, usb_device_path: str, has_eeprom: bool = False, eeprom_tool: str = None) -> None:
+    def __init__(
+        self, usb_device_path: str, has_eeprom: bool = False, eeprom_tool: str = None
+    ) -> None:
         super().__init__(usb_device_path, has_eeprom)
 
         self.eeprom_tool = eeprom_tool
@@ -19,7 +21,8 @@ class USBNetworkInterface(NetworkInterface):
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
             log = e.stdout.decode()
             raise NetworkEEPROMException(
-                f"Failed to write EEPROM for network interface '{interface_name}': {e}\n{log}")
+                f"Failed to write EEPROM for network interface '{interface_name}': {e}\n{log}"
+            )
 
 
 class LAN95XXNetworkInterface(USBNetworkInterface):

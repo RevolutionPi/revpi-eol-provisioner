@@ -1,4 +1,3 @@
-
 import importlib
 
 NETWORK_INTERFACE_TYPES = {
@@ -6,7 +5,7 @@ NETWORK_INTERFACE_TYPES = {
     "lan78xx": ("usb", "LAN78XXNetworkInterface"),
     "lan87xx": ("pcie", "LAN87XXNetworkInterface"),
     "ksz8851": ("spie", "KSZ8851NetworkInterface"),
-    "bcm2711": ("board", "BCM2711NetworkInterface")
+    "bcm2711": ("board", "BCM2711NetworkInterface"),
 }
 
 

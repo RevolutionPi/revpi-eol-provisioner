@@ -7,8 +7,7 @@ from revpi_provisioning.config import EOLConfigException, load_config
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Validate device configuration file")
+    parser = argparse.ArgumentParser(description="Validate device configuration file")
     parser.add_argument("config", metavar="device-configuration-file")
 
     args = parser.parse_args()
@@ -20,7 +19,9 @@ def main() -> None:
     except EOLConfigException as ce:
         error(f"Failed to validate device configuration file: {ce}", 1)
 
-    print(f"Device configuration file '{device_config_file}' has been validated succesfully")
+    print(
+        f"Device configuration file '{device_config_file}' has been validated succesfully"
+    )
 
 
 if __name__ == "__main__":

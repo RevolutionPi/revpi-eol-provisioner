@@ -1,4 +1,3 @@
-
 from revpi_provisioning.network import NetworkInterface
 
 
