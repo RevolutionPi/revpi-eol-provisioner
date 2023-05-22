@@ -11,8 +11,8 @@ class BoardNetworkInterface(NetworkInterface):
 
 
 class BCM2711NetworkInterface(BoardNetworkInterface):
-    def __init__(self) -> None:
-        super().__init__("", False)
+    def __init__(self, path: str = "", has_eeprom: bool = False) -> None:
+        super().__init__(path, has_eeprom)
 
     def _write_eeprom(self, mac_address: str):
         # Nothing to do here
