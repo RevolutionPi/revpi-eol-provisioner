@@ -2,6 +2,7 @@ import hashlib
 import os
 import subprocess
 import time
+import glob
 
 import gpiod
 
@@ -12,12 +13,21 @@ class HatEEPROMWriteException(Exception):
 
 
 class HatEEPROM:
-    def __init__(self,  write_protect_gpio: int, gpio_chip: str = "gpiochip0", base_eeprom: str = "/sys/bus/i2c/devices/11-0050/eeprom") -> None:
+    def __init__(self,  write_protect_gpio: int, gpio_chip: str = "gpiochip0", base_eeprom: str = "/sys/bus/i2c/devices/??-0050/eeprom") -> None:
         self.write_protect_gpio = write_protect_gpio
         self.gpio_chip = gpio_chip
-        self.base_eeprom = base_eeprom
+        self._base_eeprom = base_eeprom
 
         self.__write_protect_gpio_line = None
+
+    @property
+    def base_eeprom(self) -> str:
+        eeprom_path = glob.glob(self._base_eeprom)
+
+        if not eeprom_path:
+            raise HatEEPROMWriteException("Unable to determine HAT eeprom i2c path")
+
+        return eeprom_path[0]
 
     def _init_gpio(self) -> None:
         try:
