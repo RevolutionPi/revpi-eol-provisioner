@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import sys
 
 from revpi_provisioning.cli.utils import error
 from revpi_provisioning.config import EOLConfigException, load_config
@@ -34,7 +35,7 @@ def parse_args() -> tuple:
     return args.product_number, args.mac_address, args.eep_image
 
 
-def main() -> None:
+def main() -> int:
     product, mac, image_path = parse_args()
 
     print(f"Starting device provisioning for product '{product}'")
@@ -104,4 +105,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
