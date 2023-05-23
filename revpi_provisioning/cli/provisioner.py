@@ -59,7 +59,9 @@ def main() -> int:
 
         print(f"Registering network interfaces. Base mac address will be '{mac}'")
 
-        for index, interface_config in enumerate(configuration.get("network_interfaces", [])):
+        for index, interface_config in enumerate(
+            configuration.get("network_interfaces", [])
+        ):
             interface_path = interface_config["path"]
             interface_type = interface_config["type"]
 
