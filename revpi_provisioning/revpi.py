@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Union
 
 import yaml
 
@@ -14,9 +15,13 @@ class RevPi:
         self.hat_eeprom: HatEEPROM = None
         self.network_interfaces: list[NetworkInterface] = []
 
-    def write_hat_eeprom(self, eeprom_image_file: str) -> None:
+    def write_hat_eeprom(self, eeprom_image: Union[str, bytes]) -> None:
         if self.hat_eeprom is not None:
-            self.hat_eeprom.write(eeprom_image_file)
+            self.hat_eeprom.write(eeprom_image)
+
+    def clear_hat_eeprom(self) -> None:
+        if self.hat_eeprom is not None:
+            self.hat_eeprom.clear_content()
 
     def write_mac_addresses(self, first_mac_address: str = None) -> list[str]:
         mac_address = MacAddress(first_mac_address)
