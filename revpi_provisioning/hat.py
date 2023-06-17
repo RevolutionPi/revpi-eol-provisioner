@@ -3,6 +3,7 @@ import os
 import subprocess
 import time
 import glob
+from typing import Union
 
 import gpiod
 
@@ -47,14 +48,63 @@ class HatEEPROM:
                 f"Failed to set initialize write protection gpio: {e}"
             )
 
-    def _write_image(self, eeprom_image: str) -> None:
+    def _read_image_file(
+        self, eeprom_image: Union[str, bytes], length: int = None
+    ) -> bytes:
+        """Read image from file.
+
+        If eeprom image is already of type bytes,
+        the data is passed through and no read attempt ins done.
+
+        Parameters
+        ----------
+        eeprom_image : Union[str, bytes]
+            Image file or image content as bytes
+        length : int, optional
+            Number of bytes to read from image file
+
+        Returns
+        -------
+        bytes
+            image content
+        """
+        if isinstance(eeprom_image, str):
+            with open(eeprom_image, "rb") as fh:
+                data = fh.read(length)
+        else:
+            data = eeprom_image
+
+        return data
+
+    def _write_image(self, eeprom_image: Union[str, bytes], length: int = None) -> None:
+        """Write image to HAT eeprom.
+
+        Parameters
+        ----------
+        eeprom_image : Union[str, bytes]
+            Image file or image content as bytes
+        length : int, optional
+            Number of bytes to read from image file
+
+        Raises
+        ------
+        HatEEPROMWriteException
+            Unable to write HAT eeprom image
+        """
         try:
-            with open(eeprom_image, "rb") as file_eeprom_image, open(
-                self.base_eeprom, "wb"
-            ) as file_eeprom:
-                file_eeprom.write(file_eeprom_image.read())
-        except Exception as e:
-            raise HatEEPROMWriteException(f"Failed to write image to EEPROM: {e}")
+            eeprom_length = os.path.getsize(self.base_eeprom)
+
+            data = self._read_image_file(eeprom_image, length)
+
+            if len(data) > eeprom_length:
+                raise Exception("Image file is too big for EEPROM")
+
+            with open(self.base_eeprom, "wb") as file_eeprom:
+                file_eeprom.write(data)
+        except Exception as exc:
+            raise HatEEPROMWriteException(
+                f"Failed to write image to EEPROM: {exc}"
+            ) from exc
 
     def _loaded_overlays(self) -> list:
         overlays = []
@@ -101,26 +151,34 @@ class HatEEPROM:
         except OSError as e:
             raise HatEEPROMWriteException(f"Failed to set write protection gpio: {e}")
 
-    def _sha256_checksum(self, file_name: str, file_length: int = None) -> str:
+    def _sha256_checksum(self, data: bytes) -> str:
         try:
-            with open(file_name, "rb") as fh:
-                if file_length is None:
-                    file_content = fh.read()
-                else:
-                    file_content = fh.read(file_length)
-                sha256_checksum = hashlib.sha256(file_content).hexdigest()
-        except Exception as e:
+            sha256_checksum = hashlib.sha256(data).hexdigest()
+        except Exception as exc:
             raise HatEEPROMWriteException(
-                f"Failed to get SHA256 checksum of {file_name}: {e}"
-            )
+                f"Failed to get SHA256 checksum of HAT eeprom: {exc}"
+            ) from exc
 
         return sha256_checksum
 
-    def _verify_image(self, eeprom_image: str):
-        sha256_eeprom_image = self._sha256_checksum(eeprom_image)
-        sha256_eeprom = self._sha256_checksum(
-            self.base_eeprom, os.path.getsize(eeprom_image)
-        )
+    def _verify_image(self, eeprom_image: Union[str, bytes]) -> None:
+        """Verify HAT eeprom against image file or contents.
+
+        Parameters
+        ----------
+        eeprom_image : Union[str, bytes]
+            Image file or image content as bytes
+
+        Raises
+        ------
+        HatEEPROMWriteException
+            Unable to verify image contents
+        """
+        data_image = self._read_image_file(eeprom_image)
+        data_eep = self._read_image_file(self.base_eeprom)
+
+        sha256_eeprom_image = self._sha256_checksum(data_image)
+        sha256_eeprom = self._sha256_checksum(data_eep[: len(data_image)])
 
         if sha256_eeprom != sha256_eeprom_image:
             raise HatEEPROMWriteException(
@@ -128,9 +186,17 @@ class HatEEPROM:
                 + f"{sha256_eeprom} (eeprom) != {sha256_eeprom_image} (image)"
             )
 
-    def write(self, eeprom_image: str):
+    def write(self, eeprom_image: str) -> None:
+        """Write HAT eeprom contents."""
         self._write_protect(False)
         self._load_dtoverlay()
         self._write_image(eeprom_image)
         self._verify_image(eeprom_image)
+        self._write_protect(True)
+
+    def clear_content(self) -> None:
+        """Clear HAT eeprom contents."""
+        self._write_protect(False)
+        self._load_dtoverlay()
+        self._write_image(b"\xff" * os.path.getsize(self.base_eeprom))
         self._write_protect(True)
