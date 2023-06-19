@@ -200,3 +200,24 @@ class HatEEPROM:
         self._load_dtoverlay()
         self._write_image(b"\xff" * os.path.getsize(self.base_eeprom))
         self._write_protect(True)
+
+    def dump(self, output_file: str) -> None:
+        """Dump eeprom contents to file.
+
+        Parameters
+        ----------
+        output_file : str
+            output file where the eeprom content is written to
+        """
+        self._load_dtoverlay()
+
+        try:
+            with open(self.base_eeprom, "rb") as fh, open(
+                output_file, "wb"
+            ) as fh_output:
+                data = fh.read()
+                fh_output.write(data)
+        except Exception as exc:
+            raise HatEEPROMWriteException(
+                f"Could not dump EEPROM contents / write to output file: {exc}"
+            ) from exc

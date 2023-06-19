@@ -23,6 +23,10 @@ class RevPi:
         if self.hat_eeprom is not None:
             self.hat_eeprom.clear_content()
 
+    def dump_hat_eeprom(self, output_file: str) -> None:
+        if self.hat_eeprom is not None:
+            self.hat_eeprom.dump(output_file)
+
     def write_mac_addresses(self, first_mac_address: str = None) -> list[str]:
         mac_address = MacAddress(first_mac_address)
         mac_addresses = []
