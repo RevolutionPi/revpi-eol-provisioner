@@ -2,7 +2,8 @@
 import argparse
 import sys
 
-from revpi_provisioning.cli.utils import error
+import revpi_provisioning.cli.utils
+from revpi_provisioning.cli.utils import error, verboseprint
 from revpi_provisioning.config import EOLConfigException, load_config
 from revpi_provisioning.hat import HatEEPROM, HatEEPROMWriteException
 from revpi_provisioning.network import (
@@ -16,6 +17,13 @@ from revpi_provisioning.utils import extract_product
 
 
 def parse_args() -> tuple:
+    """Parse CLI args.
+
+    Returns
+    -------
+    tuple
+        CLI args
+    """
     parser = argparse.ArgumentParser(description="Provision RevPi hardware")
 
     parser.add_argument(
@@ -29,27 +37,38 @@ def parse_args() -> tuple:
     parser.add_argument(
         "eep_image", metavar="eep-image", help="path to eep-image file to be written"
     )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", default=False, required=False
+    )
 
     args = parser.parse_args()
 
-    return args.product_number, args.mac_address, args.eep_image
+    return args.product_number, args.mac_address, args.eep_image, args.verbose
 
 
 def main() -> int:
-    product, mac, image_path = parse_args()
+    """Run the actual program logic.
 
-    print(f"Starting device provisioning for product '{product}'")
+    Returns
+    -------
+    int
+        return code of the program
+    """
+    product, mac, image_path, verbose = parse_args()
+    revpi_provisioning.cli.utils.verbose = verbose
+
+    verboseprint(f"Starting device provisioning for product '{product}'")
 
     try:
-        print("Loading device configuration ... ", end="")
+        verboseprint("Loading device configuration ... ", end="")
         configuration = load_config(product)
-        print("OK")
+        verboseprint("OK")
 
         revpi = RevPi(*extract_product(product))
 
         # add HAT EEPROM if specified in config file
         if "hat_eeprom" in configuration:
-            print(
+            verboseprint(
                 f"Found HAT EEPROM definition in config file. Will write image '{image_path}'"
             )
             revpi.hat_eeprom = HatEEPROM(
@@ -57,7 +76,9 @@ def main() -> int:
                 configuration["hat_eeprom"].get("wp_gpio_chipname", "gpiochip0"),
             )
 
-        print(f"Registering network interfaces. Base mac address will be '{mac}'")
+        verboseprint(
+            f"Registering network interfaces. Base mac address will be '{mac}'"
+        )
 
         for index, interface_config in enumerate(
             configuration.get("network_interfaces", [])
@@ -73,7 +94,7 @@ def main() -> int:
                 line += f"path={interface_path} "
             line += "... "
 
-            print(line, end="")
+            verboseprint(line, end="")
 
             interface = interface_class(
                 interface_path, interface_config.get("eeprom", False)
@@ -81,17 +102,17 @@ def main() -> int:
 
             revpi.network_interfaces.append(interface)
 
-            print("OK")
+            verboseprint("OK")
 
         if revpi.hat_eeprom:
-            print("Writing HAT EEPROM ... ", end="")
+            verboseprint("Writing HAT EEPROM ... ", end="")
             revpi.write_hat_eeprom(image_path)
-            print("OK")
+            verboseprint("OK")
 
-        print("Writing mac addresses ... ", end="")
+        verboseprint("Writing mac addresses ... ", end="")
         mac_addresses = revpi.write_mac_addresses(mac)
-        print("OK")
-        print(f"Successfully wrote {len(mac_addresses)} mac addresses")
+        verboseprint("OK")
+        verboseprint(f"Successfully wrote {len(mac_addresses)} mac addresses")
     except EOLConfigException as ce:
         print("FAILED")
         error(f"Could not load configuration: {ce}", 1)
