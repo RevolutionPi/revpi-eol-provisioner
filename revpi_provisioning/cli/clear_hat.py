@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+
 import argparse
 import sys
 
-from revpi_provisioning.cli.utils import error
+import revpi_provisioning.cli.utils
+from revpi_provisioning.cli.utils import error, verboseprint
 from revpi_provisioning.config import EOLConfigException, load_config
 from revpi_provisioning.hat import HatEEPROM, HatEEPROMWriteException
 from revpi_provisioning.revpi import RevPi
@@ -11,6 +13,13 @@ from revpi_provisioning.utils import extract_product
 
 
 def parse_args() -> tuple:
+    """Parse CLI args.
+
+    Returns
+    -------
+    tuple
+        CLI args
+    """
     parser = argparse.ArgumentParser(description="Clear RevPi HAT EEPROM")
 
     parser.add_argument(
@@ -18,20 +27,30 @@ def parse_args() -> tuple:
         metavar="product-number",
         help="product number of target device in format PRxxxxxxRxx",
     )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", default=False, required=False
+    )
     args = parser.parse_args()
 
-    return args.product_number
+    return args.product_number, args.verbose
 
 
 def main() -> int:
-    product = parse_args()
+    """Run the actual program logic.
 
-    print(f"Starting device provisioning for product '{product}'")
+    Returns
+    -------
+    int
+        return code of the program
+    """
+    product, verbose = parse_args()
+
+    revpi_provisioning.cli.utils.verbose = verbose
 
     try:
-        print("Loading device configuration ... ", end="")
+        verboseprint("Loading device configuration ... ", end="")
         configuration = load_config(product)
-        print("OK")
+        verboseprint("OK")
 
         revpi = RevPi(*extract_product(product))
 
@@ -43,9 +62,9 @@ def main() -> int:
             )
 
         if revpi.hat_eeprom:
-            print("Clear HAT EEPROM ... ", end="")
+            verboseprint("Clear HAT EEPROM ... ", end="")
             revpi.clear_hat_eeprom()
-            print("OK")
+            verboseprint("OK")
 
     except EOLConfigException as ce:
         print("FAILED")
