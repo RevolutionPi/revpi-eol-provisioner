@@ -1,3 +1,17 @@
+<details>
+<summary>We have moved to GitLab! Read this for more information.</summary>
+
+We have recently moved our repositories to GitLab. You can find revpi-eol-provisioner
+here: https://gitlab.com/revolutionpi/revpi-eol-provisioner  
+All repositories on GitHub will stay up-to-date by being synchronised from
+GitLab.
+
+We still maintain a presence on GitHub but our work happens over at GitLab. If
+you want to contribute to any of our projects we would prefer this contribution
+to happen on GitLab, but we also still accept contributions on GitHub if you
+prefer that.
+</details>
+
 # EOL utilities for RevPi devices
 
 The main purpose of this repository is the device provisioning during our EOL tests. Among the provisioner tool other tools exists, which aim to ease different tasks in development / debugging.
