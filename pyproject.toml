@@ -1,3 +1,20 @@
+[project]
+name = "revpi-eol-provisioner"
+version = "1.0.0"
+dependencies = ["schema", "pyyaml", "gpiod"]
+
+[project.scripts]
+revpi-eol-provisioner = "revpi_provisioning.cli.provisioner:main"
+revpi-eol-clear-hat = "revpi_provisioning.cli.clear_hat:main"
+revpi-eol-dump-hat = "revpi_provisioning.cli.dump_hat:main"
+revpi-eol-validate-config = "revpi_provisioning.cli.validator:main"
+
+[project.optional-dependencies]
+test = ["black", "ruff"]
+
+[tool.setuptools.package-data]
+revpi_provisioning = ["devices/*.yaml"]
+
 [tool.ruff]
 line-length = 100
 select = [
@@ -12,6 +29,7 @@ ignore = [
     "ANN101", # missing-type-self
     "D107",   # undocumented-public-init
 ]
+
 
 [tool.ruff.mccabe]
 max-complexity = 10
