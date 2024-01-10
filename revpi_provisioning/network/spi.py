@@ -1,6 +1,9 @@
+"""Network interfaces which are connected via SPI."""
 from revpi_provisioning.network import NetworkInterface
 
 
 class KSZ8851NetworkInterface(NetworkInterface):
-    def __init__(self, path, has_eeprom: bool = False) -> None:
+    """Microchip KSZ8851 network interface class."""
+
+    def __init__(self, path: str, has_eeprom: bool = False) -> None:
         super().__init__(path, has_eeprom)

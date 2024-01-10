@@ -1,4 +1,4 @@
-"""Tests regarging the yaml device configuration files."""
+"""Test the yaml device configuration files."""
 import glob
 
 import pytest

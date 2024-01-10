@@ -23,7 +23,8 @@ workflow:
     - if: $CI_COMMIT_BRANCH
 
 before_script:
-  - python -V # Print out python version for debugging
+  # Print out python version for debugging
+  - python -V
   - python3 -m pip install virtualenv
   - python3 -m pip install --upgrade pip wheel
   - virtualenv venv
@@ -36,7 +37,6 @@ test:
     - if: "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH"
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
   script:
-    - if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
     - pytest -v --junit-xml report.xml
   artifacts:
     reports:

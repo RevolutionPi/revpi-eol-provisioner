@@ -1,3 +1,4 @@
+"""HAT eeprom related stuff."""
 import hashlib
 import os
 import subprocess
@@ -9,11 +10,15 @@ import gpiod
 
 
 class HatEEPROMWriteException(Exception):
-    def __init__(self, message):
+    """Exception which is raised if a there is a problem with writing the HAT eeprom content."""
+
+    def __init__(self, message: str) -> None:
         super().__init__(f"RevPi HAT EEPROM: {message}")
 
 
 class HatEEPROM:
+    """HAT eeprom representation class."""
+
     def __init__(
         self,
         write_protect_gpio: int,
@@ -28,6 +33,7 @@ class HatEEPROM:
 
     @property
     def base_eeprom(self) -> str:
+        """Base path of the HAT eeprom in sysfs."""
         eeprom_path = glob.glob(self._base_eeprom)
 
         if not eeprom_path:
@@ -46,7 +52,7 @@ class HatEEPROM:
         except OSError as e:
             raise HatEEPROMWriteException(
                 f"Failed to set initialize write protection gpio: {e}"
-            )
+            ) from e
 
     def _read_image_file(
         self, eeprom_image: Union[str, bytes], length: int = None
@@ -123,7 +129,7 @@ class HatEEPROM:
                 (_, name) = line.replace(" ", "").split(":")
                 overlays.append(name)
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
-            raise HatEEPROMWriteException(f"Failed to list loaded overlays: {e}")
+            raise HatEEPROMWriteException(f"Failed to list loaded overlays: {e}") from e
 
         return overlays
 
@@ -137,7 +143,9 @@ class HatEEPROM:
         try:
             subprocess.check_call(["dtoverlay", overlay])
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
-            raise HatEEPROMWriteException(f"Failed to load overlay '{overlay}': {e}")
+            raise HatEEPROMWriteException(
+                f"Failed to load overlay '{overlay}': {e}"
+            ) from e
 
         time.sleep(wait_afterwards)
 
@@ -149,7 +157,9 @@ class HatEEPROM:
         try:
             self.__write_protect_gpio_line.set_value(state)
         except OSError as e:
-            raise HatEEPROMWriteException(f"Failed to set write protection gpio: {e}")
+            raise HatEEPROMWriteException(
+                f"Failed to set write protection gpio: {e}"
+            ) from e
 
     def _sha256_checksum(self, data: bytes) -> str:
         try:

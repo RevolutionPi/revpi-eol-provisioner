@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+"""Dump HAT eeprom contents CLI command."""
 
 import argparse
 import sys

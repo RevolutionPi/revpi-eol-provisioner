@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+"""Clear HAT eeprom CLI command."""
+
 import argparse
 import sys
 
