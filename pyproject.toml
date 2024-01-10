@@ -10,7 +10,7 @@ revpi-eol-dump-hat = "revpi_provisioning.cli.dump_hat:main"
 revpi-eol-validate-config = "revpi_provisioning.cli.validator:main"
 
 [project.optional-dependencies]
-test = ["black", "ruff"]
+test = ["black", "ruff", "pytest"]
 
 [tool.setuptools.package-data]
 revpi_provisioning = ["devices/*.yaml"]
@@ -33,3 +33,6 @@ ignore = [
 
 [tool.ruff.mccabe]
 max-complexity = 10
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
