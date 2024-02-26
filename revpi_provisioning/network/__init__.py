@@ -7,6 +7,7 @@ NETWORK_INTERFACE_TYPES = {
     "lan743x": ("pcie", "LAN743XNetworkInterface"),
     "ksz8851": ("spie", "KSZ8851NetworkInterface"),
     "bcm2711": ("board", "BCM2711NetworkInterface"),
+    "rp1": ("board", "RP1NetworkInterface"),
 }
 
 
