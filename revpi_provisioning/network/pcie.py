@@ -27,8 +27,8 @@ class PCIeNetworkInterface(NetworkInterface):
         print(cmd)
 
 
-class LAN87XXNetworkInterface(PCIeNetworkInterface):
-    """Microchip LAN87XX network interface class."""
+class LAN743XNetworkInterface(PCIeNetworkInterface):
+    """Microchip LAN743X network interface class."""
 
     def __init__(self, pcie_device_path: str, has_eeprom: bool = False) -> None:
-        super().__init__(pcie_device_path, has_eeprom, "lan87xx-set-mac")
+        super().__init__(pcie_device_path, has_eeprom, "lan743x-set-mac")

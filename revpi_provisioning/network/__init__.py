@@ -4,7 +4,7 @@ import importlib
 NETWORK_INTERFACE_TYPES = {
     "lan95xx": ("usb", "LAN95XXNetworkInterface"),
     "lan78xx": ("usb", "LAN78XXNetworkInterface"),
-    "lan87xx": ("pcie", "LAN87XXNetworkInterface"),
+    "lan743x": ("pcie", "LAN743XNetworkInterface"),
     "ksz8851": ("spie", "KSZ8851NetworkInterface"),
     "bcm2711": ("board", "BCM2711NetworkInterface"),
 }
