@@ -1,4 +1,5 @@
 """HAT eeprom related stuff."""
+
 import hashlib
 import os
 import subprocess
@@ -54,9 +55,7 @@ class HatEEPROM:
                 f"Failed to set initialize write protection gpio: {e}"
             ) from e
 
-    def _read_image_file(
-        self, eeprom_image: Union[str, bytes], length: int = None
-    ) -> bytes:
+    def _read_image_file(self, eeprom_image: Union[str, bytes], length: int = None) -> bytes:
         """Read image from file.
 
         If eeprom image is already of type bytes,
@@ -108,17 +107,13 @@ class HatEEPROM:
             with open(self.base_eeprom, "wb") as file_eeprom:
                 file_eeprom.write(data)
         except Exception as exc:
-            raise HatEEPROMWriteException(
-                f"Failed to write image to EEPROM: {exc}"
-            ) from exc
+            raise HatEEPROMWriteException(f"Failed to write image to EEPROM: {exc}") from exc
 
     def _loaded_overlays(self) -> list:
         overlays = []
 
         try:
-            process = subprocess.run(
-                ["dtoverlay", "-l"], check=True, capture_output=True
-            )
+            process = subprocess.run(["dtoverlay", "-l"], check=True, capture_output=True)
             lines = process.stdout.decode("utf-8").split("\n")
 
             # skip first line (headline)
@@ -143,9 +138,7 @@ class HatEEPROM:
         try:
             subprocess.check_call(["dtoverlay", overlay])
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
-            raise HatEEPROMWriteException(
-                f"Failed to load overlay '{overlay}': {e}"
-            ) from e
+            raise HatEEPROMWriteException(f"Failed to load overlay '{overlay}': {e}") from e
 
         time.sleep(wait_afterwards)
 
@@ -157,9 +150,7 @@ class HatEEPROM:
         try:
             self.__write_protect_gpio_line.set_value(state)
         except OSError as e:
-            raise HatEEPROMWriteException(
-                f"Failed to set write protection gpio: {e}"
-            ) from e
+            raise HatEEPROMWriteException(f"Failed to set write protection gpio: {e}") from e
 
     def _sha256_checksum(self, data: bytes) -> str:
         try:
@@ -222,9 +213,7 @@ class HatEEPROM:
         self._load_dtoverlay()
 
         try:
-            with open(self.base_eeprom, "rb") as fh, open(
-                output_file, "wb"
-            ) as fh_output:
+            with open(self.base_eeprom, "rb") as fh, open(output_file, "wb") as fh_output:
                 data = fh.read()
                 fh_output.write(data)
         except Exception as exc:

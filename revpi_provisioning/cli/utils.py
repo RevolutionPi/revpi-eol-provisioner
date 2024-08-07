@@ -1,4 +1,5 @@
 """CLI command utilities."""
+
 import sys
 
 

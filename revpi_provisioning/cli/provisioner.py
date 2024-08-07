@@ -38,9 +38,7 @@ def parse_args() -> tuple:
     parser.add_argument(
         "eep_image", metavar="eep-image", help="path to eep-image file to be written"
     )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", default=False, required=False
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", default=False, required=False)
 
     args = parser.parse_args()
 
@@ -77,13 +75,9 @@ def main() -> int:
                 configuration["hat_eeprom"].get("wp_gpio_chipname", "gpiochip0"),
             )
 
-        verboseprint(
-            f"Registering network interfaces. Base mac address will be '{mac}'"
-        )
+        verboseprint(f"Registering network interfaces. Base mac address will be '{mac}'")
 
-        for index, interface_config in enumerate(
-            configuration.get("network_interfaces", [])
-        ):
+        for index, interface_config in enumerate(configuration.get("network_interfaces", [])):
             interface_path = interface_config["path"]
             interface_type = interface_config["type"]
 
@@ -97,9 +91,7 @@ def main() -> int:
 
             verboseprint(line, end="")
 
-            interface = interface_class(
-                interface_path, interface_config.get("eeprom", False)
-            )
+            interface = interface_class(interface_path, interface_config.get("eeprom", False))
 
             revpi.network_interfaces.append(interface)
 

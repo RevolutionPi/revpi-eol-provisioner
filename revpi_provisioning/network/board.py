@@ -1,13 +1,12 @@
 """Network interfaces which are located on the SOM itself."""
+
 from revpi_provisioning.network import NetworkInterface
 
 
 class BoardNetworkInterface(NetworkInterface):
     """Base class for onboard network interfaces."""
 
-    def __init__(
-        self, device_path: str, has_eeprom: bool = False, eeprom_tool: str = None
-    ) -> None:
+    def __init__(self, device_path: str, has_eeprom: bool = False, eeprom_tool: str = None) -> None:
         super().__init__(device_path, has_eeprom)
 
         self.eeprom_tool = eeprom_tool

@@ -1,4 +1,5 @@
 """Network interfaces which are connected via SPI."""
+
 from revpi_provisioning.network import NetworkInterface
 
 

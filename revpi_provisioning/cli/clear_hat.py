@@ -26,9 +26,7 @@ def parse_args() -> tuple:
         metavar="product-number",
         help="product number of target device in format PRxxxxxxRxx",
     )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", default=False, required=False
-    )
+    parser.add_argument("-v", "--verbose", action="store_true", default=False, required=False)
     args = parser.parse_args()
 
     return args.product_number, args.verbose

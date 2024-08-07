@@ -1,4 +1,5 @@
 """Network interfaces which are connected via PCIe."""
+
 from revpi_provisioning.network import NetworkInterface
 from revpi_provisioning.network.utils import find_pci_ethernet_device_name
 

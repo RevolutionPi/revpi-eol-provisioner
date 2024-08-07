@@ -1,4 +1,5 @@
 """Network interfaces which are connected via USB."""
+
 import subprocess
 
 from revpi_provisioning.network import NetworkInterface, NetworkEEPROMException

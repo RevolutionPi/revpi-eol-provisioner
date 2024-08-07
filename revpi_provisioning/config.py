@@ -68,15 +68,11 @@ def load_config(name: str, absolute_path: bool = False) -> dict:
         try:
             configuration = yaml.safe_load(stream)
         except yaml.YAMLError as ye:
-            raise EOLConfigException(
-                f"Could not parse device configuration file: {ye}"
-            ) from ye
+            raise EOLConfigException(f"Could not parse device configuration file: {ye}") from ye
 
     try:
         config_schema.validate(configuration)
     except SchemaError as se:
-        raise EOLConfigException(
-            f"Schema error in device configuration file: {se}"
-        ) from se
+        raise EOLConfigException(f"Schema error in device configuration file: {se}") from se
 
     return configuration

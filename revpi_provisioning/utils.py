@@ -1,4 +1,5 @@
 """Utilities for device provisioning."""
+
 import re
 
 
@@ -141,9 +142,7 @@ def extract_product(product_number: str) -> tuple:
     InvalidProductNumberException
         _description_
     """
-    product_match = re.match(
-        r"^PR([0-9]{6})R([0-9]{2})$", product_number, re.IGNORECASE
-    )
+    product_match = re.match(r"^PR([0-9]{6})R([0-9]{2})$", product_number, re.IGNORECASE)
 
     if product_match:
         return product_match.groups()

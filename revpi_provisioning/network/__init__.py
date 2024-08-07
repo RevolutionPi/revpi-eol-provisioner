@@ -1,4 +1,5 @@
 """Network related stuff."""
+
 import importlib
 
 NETWORK_INTERFACE_TYPES = {

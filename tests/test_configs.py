@@ -1,4 +1,5 @@
 """Test the yaml device configuration files."""
+
 import glob
 import os
 import re
@@ -106,8 +107,6 @@ class TestConfig:
             if wp_gpiochip is None:
                 pytest.fail("Missing write protect gpiochip in hat_eeprom section")
             elif not re.match(r"^gpiochip\d+$", wp_gpiochip):
-                pytest.fail(
-                    "Write protect gpiochip does not match pattern: " + wp_gpiochip
-                )
+                pytest.fail("Write protect gpiochip does not match pattern: " + wp_gpiochip)
         except EOLConfigException as ce:
             pytest.fail(f"Failed to validate device configuration file: {ce}", 1)
