@@ -1,8 +1,9 @@
 """Test the yaml device configuration files."""
 import glob
+import os
+import re
 
 import pytest
-import re
 
 from revpi_provisioning.config import EOLConfigException, load_config
 
@@ -17,9 +18,38 @@ def is_integer(value: object) -> bool:
     else:
         return float(value).is_integer()
 
+def is_valid_filename(filename: str) -> bool:
+    """Check if filename is product number with revision and yaml suffix.
+
+    Parameters
+    ----------
+    filename : str
+        filename
+
+    Returns
+    -------
+    bool
+        True if filename is valid, else False
+    """
+    return re.match(r"^PR\d{6}R\d{2}.yaml$", filename)
+
+
 
 @pytest.mark.parametrize("config", revpi_device_configs)
 class TestConfig:
+    def test_yaml_filename(self, config: str) -> None:
+        """Test filename of YAML configuration file..
+
+        Parameters
+        ----------
+        config : str
+            yaml configuration file
+        """
+        name =  os.path.basename(config)
+
+        if not is_valid_filename(name):
+            pytest.fail(f"Filename '{name}' does not match product id pattern")
+
     def test_yaml_file(self, config: str) -> None:
         """Validate YAML configuration file by loading it.
 
