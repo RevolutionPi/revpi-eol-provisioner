@@ -10,7 +10,7 @@ revpi-eol-dump-hat = "revpi_provisioning.cli.dump_hat:main"
 revpi-eol-validate-config = "revpi_provisioning.cli.validator:main"
 
 [project.optional-dependencies]
-test = ["ruff", "pytest"]
+test = ["ruff", "pytest", "yamllint"]
 
 [tool.setuptools.package-data]
 revpi_provisioning = ["devices/*.yaml"]

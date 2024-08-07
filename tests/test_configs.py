@@ -5,6 +5,8 @@ import os
 import re
 
 import pytest
+import yamllint.config
+import yamllint.linter
 
 from revpi_provisioning.config import EOLConfigException, load_config
 
@@ -31,6 +33,7 @@ def is_integer(value: object) -> bool:
     else:
         return float(value).is_integer()
 
+
 def is_valid_filename(filename: str) -> bool:
     """Check if filename is product number with revision and yaml suffix.
 
@@ -47,7 +50,6 @@ def is_valid_filename(filename: str) -> bool:
     return re.match(r"^PR\d{6}R\d{2}.yaml$", filename)
 
 
-
 @pytest.mark.parametrize("config", revpi_device_configs)
 class TestConfig:
     """Test wrapper which is applied to each yaml configuration."""
@@ -60,10 +62,33 @@ class TestConfig:
         config : str
             yaml configuration file
         """
-        name =  os.path.basename(config)
+        name = os.path.basename(config)
 
         if not is_valid_filename(name):
             pytest.fail(f"Filename '{name}' does not match product id pattern")
+
+    def test_yaml_lint(self, config: str) -> None:
+        """Validate YAML configuration with yamllint.
+
+        Parameters
+        ----------
+        config : str
+            yaml configuration file
+        """
+        yaml_config = yamllint.config.YamlLintConfig("extends: default")
+        with open(config, "r") as fd:
+            problems = list(yamllint.linter.run(fd, yaml_config))
+            num_problems = len(problems)
+
+            if num_problems:
+                message = f"yamllint reports {num_problems} problem"
+                message += "s" if num_problems > 1 else ""
+                message += "\n"
+
+                for problem in problems:
+                    message += f"- line {problem.line}: {problem.desc}"
+
+                pytest.fail(message)
 
     def test_yaml_file(self, config: str) -> None:
         """Validate YAML configuration file by loading it.
