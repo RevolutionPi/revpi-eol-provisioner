@@ -48,9 +48,9 @@ code_quality:
     - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
       changes:
         paths:
-          - "*.py"
+          - "**/*.py"
   script:
-    - ruff check -e --output-format gitlab . > gl-code-quality-report.json
+    - ruff check --output-format gitlab . > gl-code-quality-report.json
   artifacts:
     name: "${CI_PROJECT_NAME}_code_quality"
     when: always
@@ -63,7 +63,6 @@ code_style:
     - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
       changes:
         paths:
-          - "*.py"
+          - "**/*.py"
   script:
     - ruff format --check .
-    - ruff check .
