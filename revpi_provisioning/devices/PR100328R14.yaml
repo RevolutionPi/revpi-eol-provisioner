@@ -6,7 +6,7 @@ hat_eeprom:
 network_interfaces:
   - type: lan95xx
     path: 1-1.1:1.0
-    eeprom: True
+    eeprom: true
   - type: lan78xx
     path: 1-1.4:1.0
-    eeprom: True
+    eeprom: true

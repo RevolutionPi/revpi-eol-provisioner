@@ -6,7 +6,7 @@ hat_eeprom:
 network_interfaces:
   - type: bcm2711
     path: ""
-    eeprom: False
+    eeprom: false
   - type: lan78xx
     path: 2-3:1.0
-    eeprom: True
+    eeprom: true
