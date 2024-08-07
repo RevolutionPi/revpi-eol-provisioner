@@ -12,6 +12,18 @@ revpi_device_configs = sorted(glob.glob("revpi_provisioning/devices/*.yaml"))
 
 
 def is_integer(value: object) -> bool:
+    """Check if provided value is an integer.
+
+    Parameters
+    ----------
+    value : object
+        value to check
+
+    Returns
+    -------
+    bool
+        True if value is an integer, False if not
+    """
     try:
         float(value)
     except ValueError:
@@ -38,6 +50,8 @@ def is_valid_filename(filename: str) -> bool:
 
 @pytest.mark.parametrize("config", revpi_device_configs)
 class TestConfig:
+    """Test wrapper which is applied to each yaml configuration."""
+
     def test_yaml_filename(self, config: str) -> None:
         """Test filename of YAML configuration file..
 
