@@ -15,9 +15,12 @@ test = ["black", "ruff", "pytest"]
 [tool.setuptools.package-data]
 revpi_provisioning = ["devices/*.yaml"]
 
+[tool.black]
+line-length = 100
+
 [tool.ruff]
 line-length = 100
-select = [
+lint.select = [
     "ANN", # flake8-annotations
     "B",   # flake8-bugbear
     "D",   # pydocstyle
@@ -25,14 +28,18 @@ select = [
     "F",   # Pyflakes
     "Q",   # flake8-quotes
 ]
-ignore = [
+lint.ignore = [
+    "D203",   # incompatible with D211
+    "D213",   # incompatible with D212
     "ANN101", # missing-type-self
     "D107",   # undocumented-public-init
 ]
 
-
-[tool.ruff.mccabe]
+[tool.lint.mccabe]
 max-complexity = 10
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
