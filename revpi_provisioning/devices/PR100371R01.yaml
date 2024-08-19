@@ -1,0 +1,12 @@
+---
+hat_eeprom:
+  wp_gpio: 25
+  wp_gpiochip: gpiochip0
+
+network_interfaces:
+  - type: lan95xx
+    path: 1-1.1:1.0
+    eeprom: true
+  - type: lan78xx
+    path: 1-1.4:1.0
+    eeprom: true
