@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022-2024 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """Validate yaml config file CLI command."""
 
 import argparse

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022-2024 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """Network interfaces which are connected via USB."""
 
 import subprocess

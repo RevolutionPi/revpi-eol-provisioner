@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """Test the yaml device configuration files."""
 
 import glob

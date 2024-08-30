@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023-2024 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """Network interfaces which are located on the SOM itself."""
 
 from revpi_provisioning.network import NetworkInterface

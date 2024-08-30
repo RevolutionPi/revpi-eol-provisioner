@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022-2024 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """RevPi abstraction stuff."""
 
 from __future__ import annotations

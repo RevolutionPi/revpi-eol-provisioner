@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023-2024 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 """Run provisioner command as default CLI command."""
 
 import sys
