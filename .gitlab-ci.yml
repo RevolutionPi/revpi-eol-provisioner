@@ -2,21 +2,28 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-#
-# https://gitlab.com/gitlab-org/gitlab/-/tree/master/lib/gitlab/ci/templates/Python.gitlab-ci.yml
-#
-image: python:3.10
-
-# Change pip's cache directory to be inside the project directory since we can
-# only cache local items.
-variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-# Pip's cache doesn't store the python packages
-# https://pip.pypa.io/en/stable/reference/pip_install/#caching
-cache:
-  paths:
-    - .cache/pip
+.base:
+  #
+  # https://gitlab.com/gitlab-org/gitlab/-/tree/master/lib/gitlab/ci/templates/Python.gitlab-ci.yml
+  #
+  image: python:3.10
+  # Change pip's cache directory to be inside the project directory since we can
+  # only cache local items.
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  # Pip's cache doesn't store the python packages
+  # https://pip.pypa.io/en/stable/reference/pip_install/#caching
+  cache:
+    paths:
+      - .cache/pip
+  before_script:
+    # Print out python version for debugging
+    - python -V
+    - python3 -m pip install virtualenv
+    - python3 -m pip install --upgrade pip wheel
+    - virtualenv venv
+    - source venv/bin/activate
+    - python3 -m pip install .[test]
 
 # prevent duplicate runs for MR and branch pipelines
 workflow:
@@ -26,16 +33,8 @@ workflow:
       when: never
     - if: $CI_COMMIT_BRANCH
 
-before_script:
-  # Print out python version for debugging
-  - python -V
-  - python3 -m pip install virtualenv
-  - python3 -m pip install --upgrade pip wheel
-  - virtualenv venv
-  - source venv/bin/activate
-  - python3 -m pip install .[test]
-
 test:
+  extends: .base
   stage: build
   rules:
     - if: "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH"
@@ -47,6 +46,7 @@ test:
       junit: ${CI_PROJECT_DIR}/report.xml
 
 code_quality:
+  extends: .base
   stage: build
   rules:
     - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
@@ -62,6 +62,7 @@ code_quality:
       codequality: gl-code-quality-report.json
 
 code_style:
+  extends: .base
   stage: build
   rules:
     - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
