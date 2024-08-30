@@ -12,6 +12,9 @@ revpi-eol-validate-config = "revpi_provisioning.cli.validator:main"
 [project.optional-dependencies]
 test = ["ruff", "pytest", "yamllint"]
 
+[tool.setuptools]
+py-modules = ["revpi_provisioning"]
+
 [tool.setuptools.package-data]
 revpi_provisioning = ["devices/*.yaml"]
 
