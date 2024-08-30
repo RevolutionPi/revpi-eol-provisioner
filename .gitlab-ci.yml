@@ -1,6 +1,14 @@
 # SPDX-FileCopyrightText: 2024 KUNBUS GmbH
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
+---
+include:
+  - project: "revolutionpi/infrastructure/ci-templates"
+    file: "base.yml"
+  - project: "revolutionpi/infrastructure/ci-templates"
+    file: "check-commit/lint-commit.yml"
+  - project: "revolutionpi/infrastructure/ci-templates"
+    file: "reuse-lint.yml"
 
 .base:
   #
@@ -24,14 +32,6 @@
     - virtualenv venv
     - source venv/bin/activate
     - python3 -m pip install .[test]
-
-# prevent duplicate runs for MR and branch pipelines
-workflow:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
-      when: never
-    - if: $CI_COMMIT_BRANCH
 
 test:
   extends: .base
