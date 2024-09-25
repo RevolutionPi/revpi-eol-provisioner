@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2024 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+---
+hat_eeprom:
+  wp_gpio: 2
+  wp_gpiochip: gpiochip0
+
+network_interfaces:
+  - type: lan95xx
+    path: 1-1.1:1.0
+    eeprom: true
