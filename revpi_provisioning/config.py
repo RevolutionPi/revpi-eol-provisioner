@@ -21,7 +21,15 @@ class EOLConfigException(Exception):
 
 config_schema = Schema(
     {
-        Optional("hat_eeprom"): {"wp_gpio": int, Optional("wp_gpiochip"): str},
+        Optional("hat_eeprom"): {
+            "wp_gpio": int,
+            Optional("wp_gpiochip"): str,
+            Optional("overlay"): And(
+                str,
+                lambda ovl: ovl in ["revpi-hat-eeprom", "revpi-hat-eeprom-pi5"],
+                error="Invalid overlay name for HAT eeprom",
+            ),
+        },
         "network_interfaces": [
             {
                 "type": And(

@@ -9,9 +9,13 @@ import os
 import subprocess
 import time
 import glob
-from typing import Union
+from typing import Optional, Union
 
 import gpiod
+
+DEFAULT_GPIO_CHIP = "gpiochip0"
+DEFAULT_OVERLAY = "revpi-hat-eeprom"
+DEFAULT_EEPROM_PATHS = ["/sys/bus/i2c/devices/?-0050/eeprom", "/sys/bus/i2c/devices/??-0050/eeprom"]
 
 
 class HatEEPROMWriteException(Exception):
@@ -27,19 +31,30 @@ class HatEEPROM:
     def __init__(
         self,
         write_protect_gpio: int,
-        gpio_chip: str = "gpiochip0",
-        base_eeprom: str = "/sys/bus/i2c/devices/??-0050/eeprom",
+        gpio_chip: str = DEFAULT_GPIO_CHIP,
+        base_eeprom: Optional[str] = None,
+        overlay: str = DEFAULT_OVERLAY,
     ) -> None:
         self.write_protect_gpio = write_protect_gpio
         self.gpio_chip = gpio_chip
         self._base_eeprom = base_eeprom
+        self._overlay = overlay
 
         self.__write_protect_gpio_line = None
 
     @property
     def base_eeprom(self) -> str:
         """Base path of the HAT eeprom in sysfs."""
-        eeprom_path = glob.glob(self._base_eeprom)
+        if self._base_eeprom is not None:
+            paths = [self._base_eeprom]
+        else:
+            paths = DEFAULT_EEPROM_PATHS
+
+        for path in paths:
+            eeprom_path = glob.glob(path)
+            if eeprom_path:
+                # take first match
+                break
 
         if not eeprom_path:
             raise HatEEPROMWriteException("Unable to determine HAT eeprom i2c path")
@@ -132,17 +147,15 @@ class HatEEPROM:
 
         return overlays
 
-    def _load_dtoverlay(
-        self, wait_afterwards: int = 0.5, overlay: str = "revpi-hat-eeprom"
-    ) -> None:
-        if overlay in self._loaded_overlays():
+    def _load_dtoverlay(self, wait_afterwards: int = 0.5) -> None:
+        if self._overlay in self._loaded_overlays():
             # overlay already loaded, no need to do it again
             return
 
         try:
-            subprocess.check_call(["dtoverlay", overlay])
+            subprocess.check_call(["dtoverlay", self._overlay])
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
-            raise HatEEPROMWriteException(f"Failed to load overlay '{overlay}': {e}") from e
+            raise HatEEPROMWriteException(f"Failed to load overlay '{self._overlay}': {e}") from e
 
         time.sleep(wait_afterwards)
 

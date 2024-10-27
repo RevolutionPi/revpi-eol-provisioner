@@ -10,7 +10,12 @@ import sys
 import revpi_provisioning.cli.utils
 from revpi_provisioning.cli.utils import error, verboseprint
 from revpi_provisioning.config import EOLConfigException, load_config
-from revpi_provisioning.hat import HatEEPROM, HatEEPROMWriteException
+from revpi_provisioning.hat import (
+    DEFAULT_GPIO_CHIP,
+    DEFAULT_OVERLAY,
+    HatEEPROM,
+    HatEEPROMWriteException,
+)
 from revpi_provisioning.network import (
     InvalidNetworkInterfaceTypeString,
     NetworkEEPROMException,
@@ -76,7 +81,8 @@ def main() -> int:
             )
             revpi.hat_eeprom = HatEEPROM(
                 configuration["hat_eeprom"]["wp_gpio"],
-                configuration["hat_eeprom"].get("wp_gpio_chipname", "gpiochip0"),
+                configuration["hat_eeprom"].get("wp_gpio_chipname", DEFAULT_GPIO_CHIP),
+                overlay=configuration["hat_eeprom"].get("overlay", DEFAULT_OVERLAY),
             )
 
         verboseprint(f"Registering network interfaces. Base mac address will be '{mac}'")
