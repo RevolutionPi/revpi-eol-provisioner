@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: 2024 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+*.py    text eol=lf
+*.yaml  text eol=lf
+*.json  text eol=lf
