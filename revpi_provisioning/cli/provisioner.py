@@ -121,7 +121,7 @@ def main() -> int:
         error(f"Could not load configuration: {ce}", 1)
     except NetworkInterfaceNotFoundException as nie:
         print("FAILED")
-        error(f"Could not found network interface: {nie}", 2)
+        error(f"Could not find network interface: {nie}", 2)
     except HatEEPROMWriteException as he:
         print("FAILED")
         error(f"Could not write image to HAT EEPROM: {he}", 3)
