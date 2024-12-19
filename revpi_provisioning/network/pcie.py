@@ -4,7 +4,9 @@
 
 """Network interfaces which are connected via PCIe."""
 
-from revpi_provisioning.network import NetworkInterface
+import subprocess
+
+from revpi_provisioning.network import NetworkEEPROMException, NetworkInterface
 from revpi_provisioning.network.utils import find_pci_ethernet_device_name
 
 
@@ -27,9 +29,15 @@ class PCIeNetworkInterface(NetworkInterface):
             mac address to write
         """
         interface_name = find_pci_ethernet_device_name(self.path)
-        cmd = [self.eeprom_tool, interface_name, mac_address]
+        cmd = [self.eeprom_tool, interface_name, str(mac_address)]
 
-        print(cmd)
+        try:
+            subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            log = e.stdout.decode()
+            raise NetworkEEPROMException(
+                f"Failed to write EEPROM for network interface '{interface_name}': {e}\n{log}"
+            ) from e
 
 
 class LAN743XNetworkInterface(PCIeNetworkInterface):
