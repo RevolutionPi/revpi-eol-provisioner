@@ -72,9 +72,7 @@ def load_config(name: str, absolute_path: bool = False) -> dict:
         device_config_file = f"{basepath}/devices/{name}.yaml"
 
     if not os.path.exists(device_config_file):
-        raise EOLConfigException(
-            f"Device configuration file '{device_config_file}' " "does not exist"
-        )
+        raise EOLConfigException(f"Device configuration file '{device_config_file}' does not exist")
 
     with open(device_config_file, "r") as stream:
         try:

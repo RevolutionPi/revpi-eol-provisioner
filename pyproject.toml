@@ -38,7 +38,6 @@ lint.select = [
 lint.ignore = [
     "D203",   # incompatible with D211
     "D213",   # incompatible with D212
-    "ANN101", # missing-type-self
     "D107",   # undocumented-public-init
 ]
 
