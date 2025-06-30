@@ -51,7 +51,7 @@ def is_valid_filename(filename: str) -> bool:
     bool
         True if filename is valid, else False
     """
-    return re.match(r"^PR\d{6}R\d{2}.yaml$", filename)
+    return re.match(r"^(?:PR\d{6}|FE\d{4})R\d{2}(?:\.yaml)?$", filename)
 
 
 @pytest.mark.parametrize("config", revpi_device_configs)
