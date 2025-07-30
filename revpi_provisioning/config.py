@@ -71,14 +71,20 @@ def load_config(name: str, absolute_path: bool = False) -> dict:
         basepath = pathlib.Path(__file__).parent.resolve()
         device_config_file = f"{basepath}/devices/{name}.yaml"
 
-    if not os.path.exists(device_config_file):
-        raise EOLConfigException(f"Device configuration file '{device_config_file}' does not exist")
+    configuration = {}
+    # Try PRNNNNNNRNN.yaml and fallback to PRNNNNNN.yaml
+    for config_file in (device_config_file, f"{device_config_file[:-8]}.yaml"):
+        if not os.path.exists(config_file):
+            continue
 
-    with open(device_config_file, "r") as stream:
-        try:
-            configuration = yaml.safe_load(stream)
-        except yaml.YAMLError as ye:
-            raise EOLConfigException(f"Could not parse device configuration file: {ye}") from ye
+        with open(config_file, "r") as stream:
+            try:
+                configuration = yaml.safe_load(stream)
+            except yaml.YAMLError as ye:
+                raise EOLConfigException(f"Could not parse device configuration file: {ye}") from ye
+
+    if not configuration:
+        raise EOLConfigException(f"Device configuration file '{device_config_file}' does not exist")
 
     try:
         config_schema.validate(configuration)
