@@ -93,7 +93,7 @@ class MacAddress:
         str
             mac address formated with delimiters
         """
-        return delimiter.join(map("".join, zip(*[iter(str(self))] * group_length)))
+        return delimiter.join(map("".join, zip(*[iter(str(self))] * group_length, strict=True)))
 
     @property
     def format_colon(self) -> str:
