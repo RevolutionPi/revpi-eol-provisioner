@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2022-2025 KUNBUS GmbH
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+---
+network_interfaces:
+  - type: lan95xx
+    path: 1-1.1:1.0
+    eeprom: false
