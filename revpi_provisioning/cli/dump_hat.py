@@ -78,11 +78,11 @@ def main() -> int:
             verboseprint("OK")
 
     except EOLConfigException as ce:
-        print("FAILED")
         error(f"Could not load configuration: {ce}", 1)
     except HatEEPROMWriteException as he:
-        print("FAILED")
         error(f"Could not dump HAT EEPROM: {he}", 3)
+
+    return 0
 
 
 if __name__ == "__main__":

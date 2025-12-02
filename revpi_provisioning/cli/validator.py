@@ -29,7 +29,7 @@ def main() -> None:
     try:
         load_config(device_config_file, absolute_path=True)
     except EOLConfigException as ce:
-        return error(f"Failed to validate device configuration file: {ce}", 1)
+        error(f"Failed to validate device configuration file: {ce}", 1)
 
     print(f"Device configuration file '{device_config_file}' has been validated successfully")
 

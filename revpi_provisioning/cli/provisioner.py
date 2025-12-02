@@ -117,17 +117,15 @@ def main() -> int:
         verboseprint("OK")
         verboseprint(f"Successfully wrote {len(mac_addresses)} mac addresses")
     except EOLConfigException as ce:
-        print("FAILED")
         error(f"Could not load configuration: {ce}", 1)
     except NetworkInterfaceNotFoundException as nie:
-        print("FAILED")
         error(f"Could not find network interface: {nie}", 2)
     except HatEEPROMWriteException as he:
-        print("FAILED")
         error(f"Could not write image to HAT EEPROM: {he}", 3)
     except (NetworkEEPROMException, InvalidNetworkInterfaceTypeString) as ne:
-        print("FAILED")
         error(f"Could not write mac address: {ne}", 4)
+
+    return 0
 
 
 if __name__ == "__main__":
