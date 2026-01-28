@@ -10,5 +10,5 @@ hat_eeprom:
 
 network_interfaces:
   - type: rp1
-    path: "0001:01:00.0"
+    path: "0002:01:00.0"
     eeprom: false
