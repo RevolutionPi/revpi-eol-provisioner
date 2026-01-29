@@ -41,6 +41,13 @@ class HatEEPROM:
         self._overlay = overlay
 
         self.__write_protect_gpio_line = None
+        self._chip = None
+        self._gpiod_version = self._detect_gpiod_version()
+
+    def _detect_gpiod_version(self) -> int:
+        """Detect libgpiod version (1 or 2)."""
+        version = getattr(gpiod, "__version__", "1.0")
+        return 2 if version.startswith("2") else 1
 
     @property
     def base_eeprom(self) -> str:
@@ -63,16 +70,29 @@ class HatEEPROM:
 
     def _init_gpio(self) -> None:
         try:
-            chip = gpiod.Chip(self.gpio_chip)
+            if self._gpiod_version == 2:
+                # libgpiod v2.x API
+                chip_path = f"/dev/{self.gpio_chip}"
+                self._chip = gpiod.Chip(chip_path)
 
-            self.__write_protect_gpio_line = chip.get_line(self.write_protect_gpio)
-            self.__write_protect_gpio_line.request(
-                consumer="eol-provisioner", type=gpiod.LINE_REQ_DIR_OUT
-            )
+                self.__write_protect_gpio_line = self._chip.request_lines(
+                    consumer="eol-provisioner",
+                    config={
+                        self.write_protect_gpio: gpiod.LineSettings(
+                            direction=gpiod.Line.Direction.OUTPUT,
+                            output_value=gpiod.Line.Value.INACTIVE,
+                        )
+                    },
+                )
+            else:
+                # libgpiod v1.x API (legacy)
+                chip = gpiod.Chip(self.gpio_chip)
+                self.__write_protect_gpio_line = chip.get_line(self.write_protect_gpio)
+                self.__write_protect_gpio_line.request(
+                    consumer="eol-provisioner", type=gpiod.LINE_REQ_DIR_OUT
+                )
         except OSError as e:
-            raise HatEEPROMWriteException(
-                f"Failed to set initialize write protection gpio: {e}"
-            ) from e
+            raise HatEEPROMWriteException(f"Failed to initialize write protection gpio: {e}") from e
 
     def _read_image_file(self, eeprom_image: Union[str, bytes], length: int = None) -> bytes:
         """Read image from file.
@@ -165,7 +185,13 @@ class HatEEPROM:
             self._init_gpio()
 
         try:
-            self.__write_protect_gpio_line.set_value(state)
+            if self._gpiod_version == 2:
+                # libgpiod v2.x API
+                value = gpiod.Line.Value.ACTIVE if state else gpiod.Line.Value.INACTIVE
+                self.__write_protect_gpio_line.set_value(self.write_protect_gpio, value)
+            else:
+                # libgpiod v1.x API (legacy)
+                self.__write_protect_gpio_line.set_value(int(state))
         except OSError as e:
             raise HatEEPROMWriteException(f"Failed to set write protection gpio: {e}") from e
 
