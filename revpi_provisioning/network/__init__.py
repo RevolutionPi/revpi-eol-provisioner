@@ -10,7 +10,7 @@ NETWORK_INTERFACE_TYPES = {
     "lan95xx": ("usb", "LAN95XXNetworkInterface"),
     "lan78xx": ("usb", "LAN78XXNetworkInterface"),
     "lan743x": ("pcie", "LAN743XNetworkInterface"),
-    "ksz8851": ("spie", "KSZ8851NetworkInterface"),
+    "ksz8851": ("spi", "KSZ8851NetworkInterface"),
     "bcm2711": ("board", "BCM2711NetworkInterface"),
     "rp1": ("board", "RP1NetworkInterface"),
 }
