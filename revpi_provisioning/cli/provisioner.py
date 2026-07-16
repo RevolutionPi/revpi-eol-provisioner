@@ -81,7 +81,7 @@ def main() -> int:
             )
             revpi.hat_eeprom = HatEEPROM(
                 configuration["hat_eeprom"]["wp_gpio"],
-                configuration["hat_eeprom"].get("wp_gpio_chipname", DEFAULT_GPIO_CHIP),
+                configuration["hat_eeprom"].get("wp_gpiochip", DEFAULT_GPIO_CHIP),
                 overlay=configuration["hat_eeprom"].get("overlay", DEFAULT_OVERLAY),
             )
 
