@@ -28,7 +28,7 @@ def parse_args() -> tuple:
     tuple
         CLI args
     """
-    parser = argparse.ArgumentParser(description="Clear RevPi HAT EEPROM")
+    parser = argparse.ArgumentParser(description="Dump RevPi HAT EEPROM contents")
 
     parser.add_argument(
         "product_number",

@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-"""Clear HAT eeprom CLI command."""
+"""Provision RevPi hardware CLI command."""
 
 import argparse
 import sys
