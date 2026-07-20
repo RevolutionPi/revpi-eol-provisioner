@@ -79,8 +79,8 @@ class HatEEPROM:
                     consumer="eol-provisioner",
                     config={
                         self.write_protect_gpio: gpiod.LineSettings(
-                            direction=gpiod.Line.Direction.OUTPUT,
-                            output_value=gpiod.Line.Value.INACTIVE,
+                            direction=gpiod.line.Direction.OUTPUT,
+                            output_value=gpiod.line.Value.INACTIVE,
                         )
                     },
                 )
@@ -187,7 +187,7 @@ class HatEEPROM:
         try:
             if self._gpiod_version == 2:
                 # libgpiod v2.x API
-                value = gpiod.Line.Value.ACTIVE if state else gpiod.Line.Value.INACTIVE
+                value = gpiod.line.Value.ACTIVE if state else gpiod.line.Value.INACTIVE
                 self.__write_protect_gpio_line.set_value(self.write_protect_gpio, value)
             else:
                 # libgpiod v1.x API (legacy)
