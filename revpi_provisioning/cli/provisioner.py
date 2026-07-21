@@ -6,6 +6,7 @@
 
 import argparse
 import sys
+import traceback
 
 import revpi_provisioning.cli.utils
 from revpi_provisioning.cli.utils import error, verboseprint
@@ -124,6 +125,9 @@ def main() -> int:
         error(f"Could not write image to HAT EEPROM: {he}", 3)
     except (NetworkEEPROMException, InvalidNetworkInterfaceTypeString) as ne:
         error(f"Could not write mac address: {ne}", 4)
+    except Exception as ue:
+        traceback.print_exc()
+        error(f"Unexpected provisioner error: {ue}", 99)
 
     return 0
 
